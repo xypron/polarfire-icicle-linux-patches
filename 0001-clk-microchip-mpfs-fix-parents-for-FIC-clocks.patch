@@ -1,0 +1,39 @@
+From 9f66f73916e56b668260b58efd4129db8b79c3ef Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Wed, 13 Apr 2022 08:58:28 +0100
+Subject: [PATCH] clk: microchip: mpfs: fix parents for FIC clocks
+
+The fabric interconnects are on the AXI bus not AHB.
+Update their parent clocks to fix this.
+
+Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index aa1561b773d6..7485a5eeb5c0 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -277,11 +277,11 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
+ 	CLK_PERIPH(CLK_GPIO1, "clk_periph_gpio1", PARENT_CLK(AHB), 21, 0),
+ 	CLK_PERIPH(CLK_GPIO2, "clk_periph_gpio2", PARENT_CLK(AHB), 22, 0),
+ 	CLK_PERIPH(CLK_DDRC, "clk_periph_ddrc", PARENT_CLK(AHB), 23, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_FIC0, "clk_periph_fic0", PARENT_CLK(AHB), 24, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AHB), 25, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AHB), 26, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AHB), 27, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AHB), 28, 0),
++	CLK_PERIPH(CLK_FIC0, "clk_periph_fic0", PARENT_CLK(AXI), 24, CLK_IS_CRITICAL),
++	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AXI), 25, CLK_IS_CRITICAL),
++	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AXI), 26, CLK_IS_CRITICAL),
++	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AXI), 27, CLK_IS_CRITICAL),
++	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AXI), 28, 0),
+ 	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
+ };
+ 
+-- 
+2.34.1
+

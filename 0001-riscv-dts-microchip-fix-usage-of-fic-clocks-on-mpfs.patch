@@ -1,0 +1,76 @@
+From c274f6643896280a1101de9f484d85fdd020439e Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Wed, 13 Apr 2022 08:58:30 +0100
+Subject: [PATCH] riscv: dts: microchip: fix usage of fic clocks on mpfs
+
+The fic clocks passed to the pcie controller and other peripherals in
+the device tree are not the clocks they actually run on. The fics are
+actually clock domain crossers & the clock config blocks output is the
+mss/cpu side input to the interconnect. The peripherals are actually
+clocked by fixed frequency clocks embedded in the fpga fabric.
+
+Fix the device tree so that these peripherals use the correct clocks.
+The fabric side FIC0 & FIC1 inputs both use the same 125 MHz, so only
+one clock is created for them.
+
+Fixes: 528a5b1f2556 ("riscv: dts: microchip: add new peripherals to icicle kit device tree")
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../dts/microchip/microchip-mpfs-fabric.dtsi     | 16 ++++++++++++++--
+ .../riscv/boot/dts/microchip/microchip-mpfs.dtsi |  2 +-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+index 854320e17b28..ccaac3371cf9 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+@@ -7,7 +7,7 @@ core_pwm0: pwm@41000000 {
+ 		reg = <0x0 0x41000000 0x0 0xF0>;
+ 		microchip,sync-update-mask = /bits/ 32 <0>;
+ 		#pwm-cells = <2>;
+-		clocks = <&clkcfg CLK_FIC3>;
++		clocks = <&fabric_clk3>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -16,10 +16,22 @@ i2c2: i2c@44000000 {
+ 		reg = <0x0 0x44000000 0x0 0x1000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		clocks = <&clkcfg CLK_FIC3>;
++		clocks = <&fabric_clk3>;
+ 		interrupt-parent = <&plic>;
+ 		interrupts = <122>;
+ 		clock-frequency = <100000>;
+ 		status = "disabled";
+ 	};
++
++	fabric_clk3: fabric-clk3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <62500000>;
++	};
++
++	fabric_clk1: fabric-clk1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++	};
+ };
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+index c5c9d1360de0..3b48b7f35410 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+@@ -424,7 +424,7 @@ pcie: pcie@2000000000 {
+ 					<0 0 0 3 &pcie_intc 2>,
+ 					<0 0 0 4 &pcie_intc 3>;
+ 			interrupt-map-mask = <0 0 0 7>;
+-			clocks = <&clkcfg CLK_FIC0>, <&clkcfg CLK_FIC1>, <&clkcfg CLK_FIC3>;
++			clocks = <&fabric_clk1>, <&fabric_clk1>, <&fabric_clk3>;
+ 			clock-names = "fic0", "fic1", "fic3";
+ 			ranges = <0x3000000 0x0 0x8000000 0x20 0x8000000 0x0 0x80000000>;
+ 			msi-parent = <&pcie>;
+-- 
+2.34.1
+

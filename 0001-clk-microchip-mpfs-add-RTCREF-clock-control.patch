@@ -1,0 +1,75 @@
+From f9db736b8936a02c2be2a02ceae4dbb62d551e6d Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Wed, 13 Apr 2022 08:58:35 +0100
+Subject: [PATCH] clk: microchip: mpfs: add RTCREF clock control
+
+The reference clock used by the PolarFire SoC's onboard rtc was missing
+from the clock driver. Add this clock at the "config" clock level, with
+the external reference clock as its parent.
+
+Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 7c8dd5924c05..6565fb62507c 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -15,6 +15,7 @@
+ #define REG_MSSPLL_POSTDIV_CR	0x10u
+ #define REG_MSSPLL_SSCG_2_CR	0x2Cu
+ #define REG_CLOCK_CONFIG_CR	0x08u
++#define REG_RTC_CLOCK_CR	0x0Cu
+ #define REG_SUBBLK_CLOCK_CR	0x84u
+ #define REG_SUBBLK_RESET_CR	0x88u
+ 
+@@ -96,6 +97,17 @@ static const struct clk_div_table mpfs_div_ahb_table[] = {
+ 	{ 0, 0 }
+ };
+ 
++/*
++ * The only two supported reference clock frequencies for the PolarFire SoC are
++ * 100 and 125 MHz, as the rtc reference is required to be 1 MHz.
++ * It therefore only needs to have divider table entries corresponding to
++ * divide by 100 and 125.
++ */
++static const struct clk_div_table mpfs_div_rtcref_table[] = {
++	{ 100, 100 }, { 125, 125 },
++	{ 0, 0 }
++};
++
+ static unsigned long mpfs_clk_msspll_recalc_rate(struct clk_hw *hw, unsigned long prate)
+ {
+ 	struct mpfs_msspll_hw_clock *msspll_hw = to_mpfs_msspll_clk(hw);
+@@ -234,6 +246,16 @@ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
+ 		REG_CLOCK_CONFIG_CR),
+ 	CLK_CFG(CLK_AHB, "clk_ahb", "clk_msspll", 4, 2, mpfs_div_ahb_table, 0,
+ 		REG_CLOCK_CONFIG_CR),
++	{
++		.cfg.id = CLK_RTCREF,
++		.cfg.shift = 0,
++		.cfg.width = 12,
++		.cfg.table = mpfs_div_rtcref_table,
++		.cfg.reg_offset = REG_RTC_CLOCK_CR,
++		.cfg.flags = CLK_DIVIDER_ONE_BASED,
++		.hw.init =
++			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &mpfs_clk_cfg_ops, 0),
++	}
+ };
+ 
+ static int mpfs_clk_register_cfg(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hw,
+@@ -363,7 +385,7 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
+ 	CLK_PERIPH(CLK_MAC0, "clk_periph_mac0", PARENT_CLK(AHB), 1, 0),
+ 	CLK_PERIPH(CLK_MAC1, "clk_periph_mac1", PARENT_CLK(AHB), 2, 0),
+ 	CLK_PERIPH(CLK_MMC, "clk_periph_mmc", PARENT_CLK(AHB), 3, 0),
+-	CLK_PERIPH(CLK_TIMER, "clk_periph_timer", PARENT_CLK(AHB), 4, 0),
++	CLK_PERIPH(CLK_TIMER, "clk_periph_timer", PARENT_CLK(RTCREF), 4, 0),
+ 	CLK_PERIPH(CLK_MMUART0, "clk_periph_mmuart0", PARENT_CLK(AHB), 5, CLK_IS_CRITICAL),
+ 	CLK_PERIPH(CLK_MMUART1, "clk_periph_mmuart1", PARENT_CLK(AHB), 6, 0),
+ 	CLK_PERIPH(CLK_MMUART2, "clk_periph_mmuart2", PARENT_CLK(AHB), 7, 0),
+-- 
+2.34.1
+
