@@ -1,0 +1,31 @@
+From d3273dbaa1743d16828c23e4ce89251ed0666c2c Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Fri, 15 Apr 2022 13:52:19 +0100
+Subject: [PATCH 1/1] riscv: select peripheral drivers for polarfire soc
+
+Update the SOC_MICROCHIP_POLARFIRE kconfig entry to select, where
+applicable, the supported drivers for the SoC.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/Kconfig.socs | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 34592d00dde8..7f93c729d51c 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -3,6 +3,10 @@ menu "SoC selection"
+ config SOC_MICROCHIP_POLARFIRE
+ 	bool "Microchip PolarFire SoCs"
+ 	select MCHP_CLK_MPFS
++	select POLARFIRE_SOC_MAILBOX if MAILBOX
++	select POLARFIRE_SOC_SYS_CTRL if MAILBOX
++	select HW_RANDOM_POLARFIRE_SOC if POLARFIRE_SOC_SYS_CTRL
++	select PCIE_MICROCHIP_HOST if PCI_MSI && OF
+ 	select SIFIVE_PLIC
+ 	help
+ 	  This enables support for Microchip PolarFire SoC platforms.
+-- 
+2.34.1
+
