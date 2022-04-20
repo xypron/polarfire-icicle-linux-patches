@@ -7,7 +7,6 @@ There is a Vitesse VSC8662 on the Icicle Kit, until a better option
 exists, select it in Kconfig.socs for SOC_MICROCHIP_POLARFIRE.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
 ---
  arch/riscv/Kconfig.socs | 1 +
  1 file changed, 1 insertion(+)

@@ -7,7 +7,6 @@ Hardware random, PCI and clock drivers for the PolarFire SoC have been
 upstreamed but are not covered by the MAINTAINERS entry, so add them.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
 ---
  MAINTAINERS | 3 +++
  1 file changed, 3 insertions(+)

@@ -3,6 +3,10 @@
 set -e
 
 git am --abort || true
+git checkout build || git checkout -b build
+git reset --hard v5.18-rc3
+
+git am ../patches/0001-hwrng-mpfs-add-polarfire-soc-hwrng-support.patch
 
 git am ../patches/0001-clk-microchip-mpfs-fix-parents-for-FIC-clocks.patch
 git am ../patches/0001-clk-microchip-mpfs-mark-CLK_ATHENA-as-critical.patch
