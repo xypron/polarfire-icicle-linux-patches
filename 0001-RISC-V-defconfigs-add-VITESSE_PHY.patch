@@ -1,0 +1,29 @@
+From 0e6619302352427f55a79cea6f3e61936d6ebc3e Mon Sep 17 00:00:00 2001
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Date: Tue, 19 Apr 2022 15:46:45 +0200
+Subject: [PATCH 1/1] RISC-V: defconfigs: add VITESSE_PHY
+
+The PolarFire-SoC Icicle Kit uses a Vitesse VSC8662 dual port PHY.
+
+Enable CONFIG_VITESSE_PHY by default to provide network.
+
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+---
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 30e3017f22bc..12908aa7766e 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -63,6 +63,7 @@ CONFIG_MACB=y
+ CONFIG_E1000E=y
+ CONFIG_R8169=y
+ CONFIG_MICROSEMI_PHY=y
++CONFIG_VITESSE_PHY=m
+ CONFIG_INPUT_MOUSEDEV=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+-- 
+2.34.1
+

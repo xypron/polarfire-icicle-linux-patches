@@ -1,0 +1,29 @@
+From 1ed06eeb6dc46a3ece77f44bddaaef0d3cdb089a Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Fri, 15 Apr 2022 13:52:21 +0100
+Subject: [PATCH 1/1] riscv: select vitesse phy driver for polarfire soc
+
+There is a Vitesse VSC8662 on the Icicle Kit, until a better option
+exists, select it in Kconfig.socs for SOC_MICROCHIP_POLARFIRE.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+---
+ arch/riscv/Kconfig.socs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 7f93c729d51c..ff2b8b90db19 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -8,6 +8,7 @@ config SOC_MICROCHIP_POLARFIRE
+ 	select HW_RANDOM_POLARFIRE_SOC if POLARFIRE_SOC_SYS_CTRL
+ 	select PCIE_MICROCHIP_HOST if PCI_MSI && OF
+ 	select SIFIVE_PLIC
++	select VITESSE_PHY # present on icicle kit
+ 	help
+ 	  This enables support for Microchip PolarFire SoC platforms.
+ 
+-- 
+2.34.1
+
