@@ -1,0 +1,40 @@
+From 54c9d9db91c3f754716e8e3d3cb3c4e311135867 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 11 Apr 2022 08:23:41 +0100
+Subject: [PATCH 1/1] clk: microchip: mpfs: don't reset disabled peripherals
+
+The current clock driver for PolarFire SoC puts the hardware behind
+"periph" clocks into reset if their clock is disabled. CONFIG_PM was
+recently added to the riscv defconfig and exposed issues caused by this
+behaviour, where the Cadence GEM was being put into reset between its
+bringup & the PHY bringup:
+
+https://lore.kernel.org/linux-riscv/9f4b057d-1985-5fd3-65c0-f944161c7792@microchip.com/
+
+Fix this (for now) by removing the reset from mpfs_periph_clk_disable.
+
+Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 6565fb62507c..070c3b896559 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -325,10 +325,6 @@ static void mpfs_periph_clk_disable(struct clk_hw *hw)
+ 
+ 	spin_lock_irqsave(&mpfs_clk_lock, flags);
+ 
+-	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
+-	val = reg | (1u << periph->shift);
+-	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
+-
+ 	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
+ 	val = reg & ~(1u << periph->shift);
+ 	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
+-- 
+2.34.1
+
