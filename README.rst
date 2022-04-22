@@ -4,6 +4,10 @@ Linux kernel patches for PolarFire Icicle board
 This repository contains branches for different upstream kernel versions to
 build a Linux kernel that runs on the PolarFire Icicle board.
 
+Up to now I have been using the Icicle Kit Reference Design 2021.11
+(https://github.com/polarfire-soc/icicle-kit-reference-design/releases/tag/2021.11)
+for the first stage boot loader and U-Boot upstream.
+
 Usage
 -----
 
