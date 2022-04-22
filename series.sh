@@ -4,7 +4,7 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.17.1
+git reset --hard v5.17.4
 
 git am ../patches/0001-soc-add-microchip-polarfire-soc-system-controller.patch
 git am ../patches/0001-soc-microchip-make-mpfs_sys_controller_put-static.patch
