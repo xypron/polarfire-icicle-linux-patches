@@ -6,6 +6,21 @@ git am --abort || true
 git checkout build || git checkout -b build
 git reset --hard v5.18-rc3
 
+git am ../patches/0001-dt-bindings-clk-microchip-Add-Microchip-PolarFire-ho.patch
+git am ../patches/0002-dt-bindings-soc-microchip-update-syscontroller-compa.patch
+git am ../patches/0003-dt-bindings-soc-microchip-add-info-about-services-to.patch
+git am ../patches/0004-dt-bindings-rtc-add-bindings-for-microchip-mpfs-rtc.patch
+git am ../patches/0005-dt-bindings-gpio-add-bindings-for-microchip-mpfs-gpi.patch
+git am ../patches/0006-dt-bindings-pwm-add-microchip-corepwm-binding.patch
+git am ../patches/0007-riscv-dts-microchip-use-clk-defines-for-icicle-kit.patch
+git am ../patches/0008-riscv-dts-microchip-add-fpga-fabric-section-to-icicl.patch
+git am ../patches/0009-riscv-dts-microchip-refactor-icicle-kit-device-tree.patch
+git am ../patches/0010-riscv-dts-microchip-update-peripherals-in-icicle-kit.patch
+git am ../patches/0011-riscv-dts-microchip-add-new-peripherals-to-icicle-ki.patch
+git am ../patches/0012-MAINTAINERS-update-riscv-microchip-entry.patch
+
+# --- LINUX 5.18 ---
+
 git am ../patches/0001-clk-microchip-mpfs-don-t-reset-disabled-peripherals.patch
 
 git am ../patches/0001-RISC-V-fixes-relocate-DTB-if-it-s-outside-memory-reg.patch

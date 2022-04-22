@@ -1,0 +1,132 @@
+From 5b28df37d311ef95e6349af97e423842817bf06a Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 14 Feb 2022 13:58:39 +0000
+Subject: [PATCH 10/12] riscv: dts: microchip: update peripherals in icicle kit
+ device tree
+
+Assorted minor changes to the MPFS/Icicle kit device tree:
+
+- enable mmuart4 instead of mmuart0
+- remove sifive pdma
+- split memory node to match updated fpga design
+- move stdout path to serial1 to avoid collision with
+        bootloader running on the e51
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ .../microchip/microchip-mpfs-icicle-kit.dts   | 23 +++++++++++++------
+ .../boot/dts/microchip/microchip-mpfs.dtsi    | 23 +++++++++++--------
+ 2 files changed, 29 insertions(+), 17 deletions(-)
+
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+index c51bd7cf500f..dc5f351b10c4 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+@@ -18,20 +18,29 @@ aliases {
+ 		serial1 = &mmuart1;
+ 		serial2 = &mmuart2;
+ 		serial3 = &mmuart3;
++		serial4 = &mmuart4;
+ 	};
+ 
+ 	chosen {
+-		stdout-path = "serial0:115200n8";
++		stdout-path = "serial1:115200n8";
+ 	};
+ 
+ 	cpus {
+ 		timebase-frequency = <RTCCLK_FREQ>;
+ 	};
+ 
+-	memory@80000000 {
++	ddrc_cache_lo: memory@80000000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x80000000 0x0 0x40000000>;
++		reg = <0x0 0x80000000 0x0 0x2e000000>;
+ 		clocks = <&clkcfg CLK_DDRC>;
++		status = "okay";
++	};
++
++	ddrc_cache_hi: memory@1000000000 {
++		device_type = "memory";
++		reg = <0x10 0x0 0x0 0x40000000>;
++		clocks = <&clkcfg CLK_DDRC>;
++		status = "okay";
+ 	};
+ };
+ 
+@@ -39,10 +48,6 @@ &refclk {
+ 	clock-frequency = <600000000>;
+ };
+ 
+-&mmuart0 {
+-	status = "okay";
+-};
+-
+ &mmuart1 {
+ 	status = "okay";
+ };
+@@ -55,6 +60,10 @@ &mmuart3 {
+ 	status = "okay";
+ };
+ 
++&mmuart4 {
++	status = "okay";
++};
++
+ &mmc {
+ 	status = "okay";
+ 
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+index 62bd00092bcc..5e7aaaf42cde 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+@@ -174,15 +174,6 @@ clint: clint@2000000 {
+ 					      <&cpu4_intc 3>, <&cpu4_intc 7>;
+ 		};
+ 
+-		dma@3000000 {
+-			compatible = "sifive,fu540-c000-pdma";
+-			reg = <0x0 0x3000000 0x0 0x8000>;
+-			interrupt-parent = <&plic>;
+-			interrupts = <23>, <24>, <25>, <26>, <27>, <28>, <29>,
+-				     <30>;
+-			#dma-cells = <1>;
+-		};
+-
+ 		plic: interrupt-controller@c000000 {
+ 			compatible = "sifive,fu540-c000-plic", "sifive,plic-1.0.0";
+ 			reg = <0x0 0xc000000 0x0 0x4000000>;
+@@ -213,7 +204,7 @@ mmuart0: serial@20000000 {
+ 			interrupts = <90>;
+ 			current-speed = <115200>;
+ 			clocks = <&clkcfg CLK_MMUART0>;
+-			status = "disabled";
++			status = "disabled"; /* Reserved for the HSS */
+ 		};
+ 
+ 		mmuart1: serial@20100000 {
+@@ -252,6 +243,18 @@ mmuart3: serial@20104000 {
+ 			status = "disabled";
+ 		};
+ 
++		mmuart4: serial@20106000 {
++			compatible = "ns16550a";
++			reg = <0x0 0x20106000 0x0 0x400>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++			interrupt-parent = <&plic>;
++			interrupts = <94>;
++			clocks = <&clkcfg CLK_MMUART4>;
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
+ 		/* Common node entry for emmc/sd */
+ 		mmc: mmc@20008000 {
+ 			compatible = "microchip,mpfs-sd4hc", "cdns,sd4hc";
+-- 
+2.34.1
+

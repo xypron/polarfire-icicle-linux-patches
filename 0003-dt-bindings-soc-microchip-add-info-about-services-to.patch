@@ -1,0 +1,52 @@
+From b435a1728c9f6811f6f337ebe80e3aca210f1b17 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 14 Feb 2022 13:58:32 +0000
+Subject: [PATCH 03/12] dt-bindings: soc/microchip: add info about services to
+ mpfs sysctrl
+
+The services actually provided by the system controller are not
+documented so add some words about what the system controller can
+actually do. Add a link to the oneline documentation with the specific
+details of each individual service.
+Also, drop the unneeded label from the example.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ .../soc/microchip/microchip,mpfs-sys-controller.yaml  | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
+index f699772fedf3..b0dae51e1d42 100644
+--- a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
++++ b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
+@@ -10,9 +10,14 @@ maintainers:
+   - Conor Dooley <conor.dooley@microchip.com>
+ 
+ description: |
+-  The PolarFire SoC system controller is communicated with via a mailbox.
+-  This document describes the bindings for the client portion of that mailbox.
++  PolarFire SoC devices include a microcontroller acting as the system controller,
++  which provides "services" to the main processor and to the FPGA fabric. These
++  services include hardware rng, reprogramming of the FPGA and verfification of the
++  eNVM contents etc. More information on these services can be found online, at
++  https://onlinedocs.microchip.com/pr/GUID-1409CF11-8EF9-4C24-A94E-70979A688632-en-US-1/index.html
+ 
++  Communication with the system controller is done via a mailbox, of which the client
++  portion is documented here.
+ 
+ properties:
+   mboxes:
+@@ -29,7 +34,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    syscontroller: syscontroller {
++    syscontroller {
+       compatible = "microchip,mpfs-sys-controller";
+       mboxes = <&mbox 0>;
+     };
+-- 
+2.34.1
+

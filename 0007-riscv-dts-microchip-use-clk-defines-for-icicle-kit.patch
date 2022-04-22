@@ -1,0 +1,187 @@
+From 6546f920868e13ef2fe027e791dcdca49483cb6d Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 14 Feb 2022 13:58:36 +0000
+Subject: [PATCH 07/12] riscv: dts: microchip: use clk defines for icicle kit
+
+Update the Microchip Icicle kit device tree by replacing clock
+related magic numbers with their defined counterparts.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ .../microchip/microchip-mpfs-icicle-kit.dts   |  2 +-
+ .../boot/dts/microchip/microchip-mpfs.dtsi    | 25 ++++++++++---------
+ 2 files changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+index 0c748ae1b006..6d19ba196f12 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+@@ -31,7 +31,7 @@ cpus {
+ 	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x40000000>;
+-		clocks = <&clkcfg 26>;
++		clocks = <&clkcfg CLK_DDRC>;
+ 	};
+ };
+ 
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+index 869aaf0d5c06..717e39b30a15 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+@@ -2,6 +2,7 @@
+ /* Copyright (c) 2020 Microchip Technology Inc */
+ 
+ /dts-v1/;
++#include "dt-bindings/clock/microchip,mpfs-clock.h"
+ 
+ / {
+ 	#address-cells = <2>;
+@@ -14,7 +15,6 @@ cpus {
+ 		#size-cells = <0>;
+ 
+ 		cpu@0 {
+-			clock-frequency = <0>;
+ 			compatible = "sifive,e51", "sifive,rocket0", "riscv";
+ 			device_type = "cpu";
+ 			i-cache-block-size = <64>;
+@@ -22,6 +22,7 @@ cpu@0 {
+ 			i-cache-size = <16384>;
+ 			reg = <0>;
+ 			riscv,isa = "rv64imac";
++			clocks = <&clkcfg CLK_CPU>;
+ 			status = "disabled";
+ 
+ 			cpu0_intc: interrupt-controller {
+@@ -32,7 +33,6 @@ cpu0_intc: interrupt-controller {
+ 		};
+ 
+ 		cpu@1 {
+-			clock-frequency = <0>;
+ 			compatible = "sifive,u54-mc", "sifive,rocket0", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -48,6 +48,7 @@ cpu@1 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <1>;
+ 			riscv,isa = "rv64imafdc";
++			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			status = "okay";
+ 
+@@ -59,7 +60,6 @@ cpu1_intc: interrupt-controller {
+ 		};
+ 
+ 		cpu@2 {
+-			clock-frequency = <0>;
+ 			compatible = "sifive,u54-mc", "sifive,rocket0", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -75,6 +75,7 @@ cpu@2 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <2>;
+ 			riscv,isa = "rv64imafdc";
++			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			status = "okay";
+ 
+@@ -86,7 +87,6 @@ cpu2_intc: interrupt-controller {
+ 		};
+ 
+ 		cpu@3 {
+-			clock-frequency = <0>;
+ 			compatible = "sifive,u54-mc", "sifive,rocket0", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -102,6 +102,7 @@ cpu@3 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <3>;
+ 			riscv,isa = "rv64imafdc";
++			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			status = "okay";
+ 
+@@ -113,7 +114,6 @@ cpu3_intc: interrupt-controller {
+ 		};
+ 
+ 		cpu@4 {
+-			clock-frequency = <0>;
+ 			compatible = "sifive,u54-mc", "sifive,rocket0", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
+@@ -129,6 +129,7 @@ cpu@4 {
+ 			mmu-type = "riscv,sv39";
+ 			reg = <4>;
+ 			riscv,isa = "rv64imafdc";
++			clocks = <&clkcfg CLK_CPU>;
+ 			tlb-split;
+ 			status = "okay";
+ 			cpu4_intc: interrupt-controller {
+@@ -210,7 +211,7 @@ serial0: serial@20000000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <90>;
+ 			current-speed = <115200>;
+-			clocks = <&clkcfg 8>;
++			clocks = <&clkcfg CLK_MMUART0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -222,7 +223,7 @@ serial1: serial@20100000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <91>;
+ 			current-speed = <115200>;
+-			clocks = <&clkcfg 9>;
++			clocks = <&clkcfg CLK_MMUART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -234,7 +235,7 @@ serial2: serial@20102000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <92>;
+ 			current-speed = <115200>;
+-			clocks = <&clkcfg 10>;
++			clocks = <&clkcfg CLK_MMUART2>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -246,7 +247,7 @@ serial3: serial@20104000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <93>;
+ 			current-speed = <115200>;
+-			clocks = <&clkcfg 11>;
++			clocks = <&clkcfg CLK_MMUART3>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -256,7 +257,7 @@ mmc: mmc@20008000 {
+ 			reg = <0x0 0x20008000 0x0 0x1000>;
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <88>, <89>;
+-			clocks = <&clkcfg 6>;
++			clocks = <&clkcfg CLK_MMC>;
+ 			max-frequency = <200000000>;
+ 			status = "disabled";
+ 		};
+@@ -267,7 +268,7 @@ emac0: ethernet@20110000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <64>, <65>, <66>, <67>;
+ 			local-mac-address = [00 00 00 00 00 00];
+-			clocks = <&clkcfg 4>, <&clkcfg 2>;
++			clocks = <&clkcfg CLK_MAC0>, <&clkcfg CLK_AHB>;
+ 			clock-names = "pclk", "hclk";
+ 			status = "disabled";
+ 			#address-cells = <1>;
+@@ -280,7 +281,7 @@ emac1: ethernet@20112000 {
+ 			interrupt-parent = <&plic>;
+ 			interrupts = <70>, <71>, <72>, <73>;
+ 			local-mac-address = [00 00 00 00 00 00];
+-			clocks = <&clkcfg 5>, <&clkcfg 2>;
++			clocks = <&clkcfg CLK_MAC1>, <&clkcfg CLK_AHB>;
+ 			status = "disabled";
+ 			clock-names = "pclk", "hclk";
+ 			#address-cells = <1>;
+-- 
+2.34.1
+

@@ -1,0 +1,89 @@
+From 72560c6559b82b2ded469856f7a0bb425fba9b7e Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 14 Feb 2022 13:58:37 +0000
+Subject: [PATCH 08/12] riscv: dts: microchip: add fpga fabric section to
+ icicle kit
+
+Split the device tree for the Microchip MPFS into two sections by adding
+microchip-mpfs-fabric.dtsi, which contains peripherals contained in the
+FPGA fabric.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ .../dts/microchip/microchip-mpfs-fabric.dtsi  | 25 +++++++++++++++++++
+ .../microchip/microchip-mpfs-icicle-kit.dts   |  8 ++++++
+ .../boot/dts/microchip/microchip-mpfs.dtsi    |  1 +
+ 3 files changed, 34 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+new file mode 100644
+index 000000000000..854320e17b28
+--- /dev/null
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-fabric.dtsi
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/* Copyright (c) 2020-2021 Microchip Technology Inc */
++
++/ {
++	core_pwm0: pwm@41000000 {
++		compatible = "microchip,corepwm-rtl-v4";
++		reg = <0x0 0x41000000 0x0 0xF0>;
++		microchip,sync-update-mask = /bits/ 32 <0>;
++		#pwm-cells = <2>;
++		clocks = <&clkcfg CLK_FIC3>;
++		status = "disabled";
++	};
++
++	i2c2: i2c@44000000 {
++		compatible = "microchip,corei2c-rtl-v7";
++		reg = <0x0 0x44000000 0x0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&clkcfg CLK_FIC3>;
++		interrupt-parent = <&plic>;
++		interrupts = <122>;
++		clock-frequency = <100000>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+index 6d19ba196f12..ab803f71626a 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
+@@ -68,6 +68,10 @@ &mmc {
+ 	sd-uhs-sdr104;
+ };
+ 
++&i2c2 {
++	status = "okay";
++};
++
+ &emac0 {
+ 	phy-mode = "sgmii";
+ 	phy-handle = <&phy0>;
+@@ -86,3 +90,7 @@ phy1: ethernet-phy@9 {
+ 		ti,fifo-depth = <0x01>;
+ 	};
+ };
++
++&core_pwm0 {
++	status = "okay";
++};
+diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+index 717e39b30a15..c7d73756c9b8 100644
+--- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
+@@ -3,6 +3,7 @@
+ 
+ /dts-v1/;
+ #include "dt-bindings/clock/microchip,mpfs-clock.h"
++#include "microchip-mpfs-fabric.dtsi"
+ 
+ / {
+ 	#address-cells = <2>;
+-- 
+2.34.1
+
