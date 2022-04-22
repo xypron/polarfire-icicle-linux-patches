@@ -1,7 +1,7 @@
-From ae93b6856e0254e8a8a8e2542e8ea789e4c926f5 Mon Sep 17 00:00:00 2001
+From 3d22cbf7598cbd45901366a0ce08500d24eac4a9 Mon Sep 17 00:00:00 2001
 From: Conor Dooley <conor.dooley@microchip.com>
-Date: Fri, 15 Apr 2022 13:52:20 +0100
-Subject: [PATCH] riscv: config: enable the mailbox framework
+Date: Fri, 22 Apr 2022 08:25:31 +0100
+Subject: [PATCH 1/1] riscv: config: enable the mailbox framework
 
 Add the mailbox framework so that the system controller drivers get
 compiled for PolarFire SoC.
@@ -12,10 +12,10 @@ Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 12908aa7766e..f451a01e026c 100644
+index 30e3017f22bc..e8472ffbb4dc 100644
 --- a/arch/riscv/configs/defconfig
 +++ b/arch/riscv/configs/defconfig
-@@ -101,6 +101,7 @@ CONFIG_VIRTIO_PCI=y
+@@ -100,6 +100,7 @@ CONFIG_VIRTIO_PCI=y
  CONFIG_VIRTIO_BALLOON=y
  CONFIG_VIRTIO_INPUT=y
  CONFIG_VIRTIO_MMIO=y

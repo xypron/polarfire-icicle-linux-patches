@@ -1,6 +1,6 @@
-From d3273dbaa1743d16828c23e4ce89251ed0666c2c Mon Sep 17 00:00:00 2001
+From e9c7c32ef28a0475bfccb427f332437259d7fa74 Mon Sep 17 00:00:00 2001
 From: Conor Dooley <conor.dooley@microchip.com>
-Date: Fri, 15 Apr 2022 13:52:19 +0100
+Date: Fri, 22 Apr 2022 08:25:30 +0100
 Subject: [PATCH 1/1] riscv: select peripheral drivers for polarfire soc
 
 Update the SOC_MICROCHIP_POLARFIRE kconfig entry to select, where
