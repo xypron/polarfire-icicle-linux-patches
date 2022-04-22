@@ -11,6 +11,7 @@ git am ../patches/0001-clk-microchip-mpfs-don-t-reset-disabled-peripherals.patch
 git am ../patches/0001-RISC-V-fixes-relocate-DTB-if-it-s-outside-memory-reg.patch
 
 git am ../patches/0001-hwrng-mpfs-add-polarfire-soc-hwrng-support.patch
+git am ../patches/0001-hwrng-mpfs-Enable-COMPILE_TEST.patch
 
 git am ../patches/0001-clk-microchip-mpfs-fix-parents-for-FIC-clocks.patch
 git am ../patches/0001-clk-microchip-mpfs-mark-CLK_ATHENA-as-critical.patch

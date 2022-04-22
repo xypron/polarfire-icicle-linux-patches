@@ -1,0 +1,30 @@
+From 4b103e8598d74ba0a2ff80c784f19d19b0a727c1 Mon Sep 17 00:00:00 2001
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 15 Apr 2022 16:37:47 +0800
+Subject: [PATCH 1/1] hwrng: mpfs - Enable COMPILE_TEST
+
+The dependency on HW_RANDOM is redundant so this patch removes it.
+As this driver seems to cross-compile just fine we could also enable
+COMPILE_TEST.
+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ drivers/char/hw_random/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index c3a9f17bf31c..1245472a0dfe 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -387,7 +387,7 @@ config HW_RANDOM_PIC32
+ 
+ config HW_RANDOM_POLARFIRE_SOC
+ 	tristate "Microchip PolarFire SoC Random Number Generator support"
+-	depends on HW_RANDOM && POLARFIRE_SOC_SYS_CTRL
++	depends on POLARFIRE_SOC_SYS_CTRL || COMPILE_TEST
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
+ 	  Generator hardware found on PolarFire SoC (MPFS).
+-- 
+2.34.1
+
