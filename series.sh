@@ -4,7 +4,13 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.18-rc3
+git reset --hard v5.17.1
+
+git am ../patches/0001-soc-add-microchip-polarfire-soc-system-controller.patch
+git am ../patches/0001-soc-microchip-make-mpfs_sys_controller_put-static.patch
+git am ../patches/0001-soc-microchip-fix-invalid-free-in-mpfs_sys_controlle.patch
+
+git am ../patches/0001-clk-microchip-Add-driver-for-Microchip-PolarFire-SoC.patch
 
 git am ../patches/0001-dt-bindings-clk-microchip-Add-Microchip-PolarFire-ho.patch
 git am ../patches/0002-dt-bindings-soc-microchip-update-syscontroller-compa.patch

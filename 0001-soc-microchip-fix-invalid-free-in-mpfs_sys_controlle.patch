@@ -1,0 +1,57 @@
+From 8e145bc705e738ebe7ed6c53d93278981d9af356 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Fri, 18 Mar 2022 17:21:08 +0000
+Subject: [PATCH] soc/microchip: fix invalid free in mpfs_sys_controller_delete
+
+Fix an invalid kfree in mpfs_sys_controller_delete, by replacing the
+devm_kzalloc with a regular kzalloc. Change the error handling in the
+probe function to free the sys_controller struct if the probe fails.
+
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/soc/microchip/mpfs-sys-controller.c:73:1-6: WARNING: invalid free of devm_ allocated data
+Link: https://lore.kernel.org/linux-mm/202203180259.lgIylRZV-lkp@intel.com/
+
+Fixes: d0054a470c33 ("soc: add microchip polarfire soc system controller")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Conor Dooley <mail@conchuod.ie>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/soc/microchip/mpfs-sys-controller.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/microchip/mpfs-sys-controller.c b/drivers/soc/microchip/mpfs-sys-controller.c
+index 2f4535929762..52291c231f0b 100644
+--- a/drivers/soc/microchip/mpfs-sys-controller.c
++++ b/drivers/soc/microchip/mpfs-sys-controller.c
+@@ -96,9 +96,9 @@ static int mpfs_sys_controller_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mpfs_sys_controller *sys_controller;
+-	int i;
++	int i, ret;
+ 
+-	sys_controller = devm_kzalloc(dev, sizeof(*sys_controller), GFP_KERNEL);
++	sys_controller = kzalloc(sizeof(*sys_controller), GFP_KERNEL);
+ 	if (!sys_controller)
+ 		return -ENOMEM;
+ 
+@@ -107,9 +107,12 @@ static int mpfs_sys_controller_probe(struct platform_device *pdev)
+ 	sys_controller->client.tx_block = 1U;
+ 
+ 	sys_controller->chan = mbox_request_channel(&sys_controller->client, 0);
+-	if (IS_ERR(sys_controller->chan))
+-		return dev_err_probe(dev, PTR_ERR(sys_controller->chan),
+-				     "Failed to get mbox channel\n");
++	if (IS_ERR(sys_controller->chan)) {
++		ret = dev_err_probe(dev, PTR_ERR(sys_controller->chan),
++				    "Failed to get mbox channel\n");
++		kfree(sys_controller);
++		return ret;
++	}
+ 
+ 	init_completion(&sys_controller->c);
+ 	kref_init(&sys_controller->consumers);
+-- 
+2.34.1
+

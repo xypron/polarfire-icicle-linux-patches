@@ -1,0 +1,41 @@
+From e6e6479c27aa22d11ff7109125dd5ec9ef276de8 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Sat, 26 Feb 2022 12:48:27 +0000
+Subject: [PATCH] soc: microchip: make mpfs_sys_controller_put static
+
+dsafsdfd0054 ("soc: add microchip polarfire soc system controller")
+incorrectly exported mpfs_sys_controller_put. Remove the export and make
+the function static instead. This fixes the "no previous prototype
+for 'mpfs_sys_controller_put'" warning spotted by the kernel test robot.
+
+Fixes: d0054a470c33 ("soc: add microchip polarfire soc system controller")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Conor Dooley <mail@conchuod.ie>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/soc/microchip/mpfs-sys-controller.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/soc/microchip/mpfs-sys-controller.c b/drivers/soc/microchip/mpfs-sys-controller.c
+index 2f4535929762..31f3f29fc1ae 100644
+--- a/drivers/soc/microchip/mpfs-sys-controller.c
++++ b/drivers/soc/microchip/mpfs-sys-controller.c
+@@ -73,13 +73,12 @@ static void mpfs_sys_controller_delete(struct kref *kref)
+ 	kfree(sys_controller);
+ }
+ 
+-void mpfs_sys_controller_put(void *data)
++static void mpfs_sys_controller_put(void *data)
+ {
+ 	struct mpfs_sys_controller *sys_controller = data;
+ 
+ 	kref_put(&sys_controller->consumers, mpfs_sys_controller_delete);
+ }
+-EXPORT_SYMBOL(mpfs_sys_controller_put);
+ 
+ static struct platform_device subdevs[] = {
+ 	{
+-- 
+2.34.1
+
