@@ -1,0 +1,29 @@
+From 94b4df46d58c793a84caa6a0d8f62ef46d11d243 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Tue, 7 Jun 2022 14:22:04 +0100
+Subject: [PATCH 1/1] riscv: dts: microchip: fix icicle kit's dr_mode
+
+The usb on icicle kit is actually configured for otg, not host mode.
+Swap it over.
+
+Fixes: 528a5b1f2556 ("riscv: dts: microchip: add new peripherals to icicle kit device tree")
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+---
+ arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
+index 044982a11df5..121b01c8784f 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
+@@ -158,5 +158,5 @@ &syscontroller {
+ 
+ &usb {
+ 	status = "okay";
+-	dr_mode = "host";
++	dr_mode = "otg";
+ };
+-- 
+2.36.1
+

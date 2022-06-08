@@ -1,0 +1,27 @@
+From 253d7b2d55d59180fbc11fee4ca17b7f00947ce4 Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Tue, 7 Jun 2022 14:22:03 +0100
+Subject: [PATCH 1/1] MAINTAINERS: add musb to PolarFire SoC entry
+
+Add the newly introduced musb driver to the existing PolarFire SoC entry.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 01a7bfa49bdc..7e1d3b4154cd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17146,6 +17146,7 @@ F:	drivers/clk/microchip/clk-mpfs.c
+ F:	drivers/mailbox/mailbox-mpfs.c
+ F:	drivers/pci/controller/pcie-microchip-host.c
+ F:	drivers/soc/microchip/
++F:	drivers/usb/musb/mpfs.c
+ F:	include/soc/microchip/mpfs.h
+ 
+ RNBD BLOCK DRIVERS
+-- 
+2.36.1
+
