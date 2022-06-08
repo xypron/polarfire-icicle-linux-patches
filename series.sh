@@ -4,9 +4,8 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.18
+git reset --hard v5.19-rc1
 
-git am ../patches/0001-hwrng-mpfs-add-polarfire-soc-hwrng-support.patch
 git am ../patches/0001-hwrng-mpfs-Enable-COMPILE_TEST.patch
 
 git am ../patches/0001-riscv-select-peripheral-drivers-for-polarfire-soc.patch
