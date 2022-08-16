@@ -4,19 +4,22 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.19-rc1
+git reset --hard v5.19.1
 
+# Ubuntu's config-5.19.0-1002-generic already has all these settings
+# https://lore.kernel.org/linux-riscv/20220422072533.2582084-2-conor.dooley@microchip.com/
 git am ../patches/0001-riscv-select-peripheral-drivers-for-polarfire-soc.patch
+
+# Ubuntu's config-5.19.0-1002-generic already has CONFIG_MAILBOX=y
+# https://lore.kernel.org/linux-riscv/20220422072533.2582084-3-conor.dooley@microchip.com/
 git am ../patches/0001-riscv-config-enable-the-mailbox-framework.patch
+
+# Ubuntu's config-5.19.0-1002-generic already has CONFIG_VITESSE_PHY=m
+# https://lore.kernel.org/linux-riscv/20220422072533.2582084-4-conor.dooley@microchip.com/
 git am ../patches/0001-riscv-select-vitesse-phy-driver-for-polarfire-soc.patch
-git am ../patches/0001-MAINTAINERS-add-polarfire-rng-pci-and-clock-drivers.patch
 
-# https://lore.kernel.org/all/20220607132204.746180-1-conor.dooley@microchip.com/
+# https://lore.kernel.org/linux-riscv/20220613114642.1615292-2-conor.dooley@microchip.com/
 git am ../patches/0001-usb-musb-Add-support-for-PolarFire-SoC-s-musb-contro.patch
-git am ../patches/0001-MAINTAINERS-add-musb-to-PolarFire-SoC-entry.patch
-# git am ../patches/0001-riscv-dts-microchip-fix-icicle-kit-s-dr_mode.patch
-
-git am ../patches/0001-riscv-dts-microchip-re-add-pdma-to-mpfs-device-tree.patch
 
 # i2c
 # https://lore.kernel.org/all/20220603071601.1849562-1-conor.dooley@microchip.com/

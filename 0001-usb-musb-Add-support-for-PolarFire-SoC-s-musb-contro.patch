@@ -1,6 +1,6 @@
-From 3de01057a6f3a98a17c879862f769f221913e18e Mon Sep 17 00:00:00 2001
+From 483b57ac348b66b6e7cf88d06d97ec119b173ceb Mon Sep 17 00:00:00 2001
 From: Conor Dooley <conor.dooley@microchip.com>
-Date: Tue, 7 Jun 2022 14:22:02 +0100
+Date: Mon, 13 Jun 2022 12:46:42 +0100
 Subject: [PATCH 1/1] usb: musb: Add support for PolarFire SoC's musb
  controller
 
@@ -12,8 +12,8 @@ Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
  drivers/usb/musb/Kconfig  |  13 +-
  drivers/usb/musb/Makefile |   1 +
- drivers/usb/musb/mpfs.c   | 285 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 298 insertions(+), 1 deletion(-)
+ drivers/usb/musb/mpfs.c   | 265 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 278 insertions(+), 1 deletion(-)
  create mode 100644 drivers/usb/musb/mpfs.c
 
 diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
@@ -61,10 +61,10 @@ index 932247360a9f..51dd54a8de49 100644
  # possible I/O schemes will be enabled at a time ...
 diff --git a/drivers/usb/musb/mpfs.c b/drivers/usb/musb/mpfs.c
 new file mode 100644
-index 000000000000..2b3dda335783
+index 000000000000..99666ef8af06
 --- /dev/null
 +++ b/drivers/usb/musb/mpfs.c
-@@ -0,0 +1,285 @@
+@@ -0,0 +1,265 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * PolarFire SoC (MPFS) MUSB Glue Layer
@@ -212,7 +212,6 @@ index 000000000000..2b3dda335783
 +	struct mpfs_glue *glue;
 +	struct platform_device *musb_pdev;
 +	struct device *dev = &pdev->dev;
-+	struct resource musb_resources[3];
 +	struct clk *clk;
 +	int ret;
 +
@@ -270,26 +269,7 @@ index 000000000000..2b3dda335783
 +
 +	platform_set_drvdata(pdev, glue);
 +
-+	memset(musb_resources, 0x00,
-+	       sizeof(*musb_resources) * ARRAY_SIZE(musb_resources));
-+
-+	musb_resources[0].name  = pdev->resource[0].name;
-+	musb_resources[0].start = pdev->resource[0].start;
-+	musb_resources[0].end   = pdev->resource[0].end;
-+	musb_resources[0].flags = pdev->resource[0].flags;
-+
-+	musb_resources[1].name  = pdev->resource[1].name;
-+	musb_resources[1].start = pdev->resource[1].start;
-+	musb_resources[1].end   = pdev->resource[1].end;
-+	musb_resources[1].flags = pdev->resource[1].flags;
-+
-+	musb_resources[2].name  = pdev->resource[2].name;
-+	musb_resources[2].start = pdev->resource[2].start;
-+	musb_resources[2].end   = pdev->resource[2].end;
-+	musb_resources[2].flags = pdev->resource[2].flags;
-+
-+	ret = platform_device_add_resources(musb_pdev, musb_resources,
-+					    ARRAY_SIZE(musb_resources));
++	ret = platform_device_add_resources(musb_pdev, pdev->resource, pdev->num_resources);
 +	if (ret) {
 +		dev_err(dev, "failed to add resources\n");
 +		goto err_clk_disable;
