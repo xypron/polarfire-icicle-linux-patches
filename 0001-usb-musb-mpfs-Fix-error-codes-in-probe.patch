@@ -1,0 +1,41 @@
+From 93f2bb9f300a49afc1037d34c6c7116c3ce1438e Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 24 Jun 2022 10:22:20 +0300
+Subject: [PATCH 1/1] usb: musb: mpfs: Fix error codes in probe()
+
+These error paths return success but they need to return a negative
+error code.
+
+Fixes: 7a96b6ea90a4 ("usb: musb: Add support for PolarFire SoC's musb controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/musb/mpfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/musb/mpfs.c b/drivers/usb/musb/mpfs.c
+index 99666ef8af06..a69ca338eace 100644
+--- a/drivers/usb/musb/mpfs.c
++++ b/drivers/usb/musb/mpfs.c
+@@ -181,8 +181,10 @@ static int mpfs_probe(struct platform_device *pdev)
+ 	glue->clk = clk;
+ 
+ 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
++	if (!pdata) {
++		ret = -ENOMEM;
+ 		goto err_clk_disable;
++	}
+ 
+ 	pdata->config = &mpfs_musb_hdrc_config;
+ 	pdata->platform_ops = &mpfs_ops;
+@@ -197,6 +199,7 @@ static int mpfs_probe(struct platform_device *pdev)
+ 	if (IS_ERR(glue->phy)) {
+ 		dev_err(dev, "failed to register usb-phy %ld\n",
+ 			PTR_ERR(glue->phy));
++		ret = PTR_ERR(glue->phy);
+ 		goto err_clk_disable;
+ 	}
+ 
+-- 
+2.36.1
+
