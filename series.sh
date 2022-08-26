@@ -4,7 +4,7 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.19.3
+git reset --hard v5.19.4
 
 # https://lore.kernel.org/all/20220817132521.3159388-1-heinrich.schuchardt@canonical.com/
 git am ../0001-riscv-dts-microchip-correct-L2-cache-interrupts.patch
