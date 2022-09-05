@@ -4,10 +4,10 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.19.4
+git reset --hard v5.19.6
 
 # https://lore.kernel.org/all/20220817132521.3159388-1-heinrich.schuchardt@canonical.com/
-git am ../0001-riscv-dts-microchip-correct-L2-cache-interrupts.patch
+# git am ../0001-riscv-dts-microchip-correct-L2-cache-interrupts.patch
 
 # Ubuntu's config-5.19.0-1002-generic already has all these settings
 # https://lore.kernel.org/linux-riscv/20220422072533.2582084-2-conor.dooley@microchip.com/
