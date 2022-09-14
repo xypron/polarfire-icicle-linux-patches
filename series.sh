@@ -43,3 +43,26 @@ git am ../0001-usb-musb-mpfs-add-missing-clk_disable_unprepare-in-m.patch
 
 # pwm (still buggy, Conor working on a v2)
 # https://lore.kernel.org/all/20220607084551.2735922-1-conor.dooley@microchip.com/
+
+# PCI
+
+# https://lore.kernel.org/linux-riscv/20220901133403.3392291-5-conor.dooley@microchip.com/
+git am ../0001-riscv-dts-microchip-add-pci-dma-ranges-for-the-icicl.patch
+
+# https://lore.kernel.org/linux-riscv/20220901133403.3392291-6-conor.dooley@microchip.com/
+git am ../0001-riscv-dts-microchip-move-the-mpfs-pci-node-to-fabric.patch
+
+# https://lore.kernel.org/linux-riscv/20220901133403.3392291-7-conor.dooley@microchip.com/
+git am ../0001-riscv-dts-microchip-icicle-update-pci-address-proper.patch
+
+# https://lore.kernel.org/linux-riscv/20220901133403.3392291-8-conor.dooley@microchip.com/
+git am ../0001-riscv-dts-microchip-icicle-re-jig-fabric-peripheral-.patch
+
+# https://lore.kernel.org/linux-riscv/20220902142202.2437658-3-daire.mcnamara@microchip.com/ 
+git am ../0001-riscv-dts-microchip-add-fabric-address-translation-p.patch
+
+# https://lore.kernel.org/linux-riscv/20220902142202.2437658-4-daire.mcnamara@microchip.com/
+git am ../0001-PCI-microchip-add-fabric-address-translation-propert.patch
+
+# https://lore.kernel.org/linux-riscv/20220902142202.2437658-5-daire.mcnamara@microchip.com/
+git am ../0001-of-PCI-tidy-up-logging-of-ranges-containing-configur.patch

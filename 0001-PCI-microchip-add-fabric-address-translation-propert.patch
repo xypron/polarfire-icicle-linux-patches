@@ -1,0 +1,126 @@
+From da50f0f525fcf4ce4ea2d4ad18890796fadb8dd2 Mon Sep 17 00:00:00 2001
+From: Daire McNamara <daire.mcnamara@microchip.com>
+Date: Fri, 2 Sep 2022 15:22:01 +0100
+Subject: [PATCH 1/1] PCI: microchip: add fabric address translation properties
+
+On PolarFire SoC both in- & out-bound address translations occur in two
+stages. The specific translations are tightly coupled to the FPGA
+designs and supplement the {dma-,}ranges properties. The first stage of
+the translation is done by the FPGA fabric & the second by the root
+port.
+Use outbound address translation information so that the translation
+tables in the root port's bridge layer can be configured to account for
+any translation done by the FPGA fabric, for example,  on Icicle Kit
+reference design.
+
+Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+---
+ drivers/pci/controller/pcie-microchip-host.c | 59 +++++++++++++++++---
+ 1 file changed, 52 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+index 7263d175b5ad..d78745eaa4b4 100644
+--- a/drivers/pci/controller/pcie-microchip-host.c
++++ b/drivers/pci/controller/pcie-microchip-host.c
+@@ -269,6 +269,8 @@ struct mc_pcie {
+ 	struct irq_domain *event_domain;
+ 	raw_spinlock_t lock;
+ 	struct mc_msi msi;
++	u32 num_outbound_ranges;
++	u64 outbound_range_adjustments[32];
+ };
+ 
+ struct cause {
+@@ -964,6 +966,37 @@ static void mc_pcie_setup_window(void __iomem *bridge_base_addr, u32 index,
+ 	writel(0, bridge_base_addr + ATR0_PCIE_WIN0_SRC_ADDR);
+ }
+ 
++static void mc_pcie_parse_outbound_range_adjustments(struct mc_pcie *port, struct device_node *np)
++{
++	const __be32 *range;
++	int range_len, num_ranges, range_size, i;
++
++	range = of_get_property(np, "microchip,outbound-fabric-translation-ranges", &range_len);
++	if (!range)
++		return;
++
++	num_ranges = of_n_addr_cells(np);
++	range_size = range_len / sizeof(__be32) / num_ranges;
++
++	for (i = 0; i < num_ranges; i++, range += range_size) {
++		u64 pcieaddr = of_read_number(range + 1, 2);
++		u64 cpuaddr = of_read_number(range + 3, 2);
++
++		port->outbound_range_adjustments[i] = cpuaddr - pcieaddr;
++		port->num_outbound_ranges++;
++	}
++}
++
++static inline u64 mc_pcie_adjust_axi(struct mc_pcie *port, int index, u64 axi_addr)
++{
++	u64 offset = 0;
++
++	if (index < port->num_outbound_ranges)
++		offset = port->outbound_range_adjustments[index];
++
++	return axi_addr - offset;
++}
++
+ static int mc_pcie_setup_windows(struct platform_device *pdev,
+ 				 struct mc_pcie *port)
+ {
+@@ -971,14 +1004,28 @@ static int mc_pcie_setup_windows(struct platform_device *pdev,
+ 		port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
+ 	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
+ 	struct resource_entry *entry;
++	u64 axi_addr;
+ 	u64 pci_addr;
+-	u32 index = 1;
++	u32 index = 0;
++	u32 num_outbound_ranges = 0;
++
++	resource_list_for_each_entry(entry, &bridge->windows) {
++		if (resource_type(entry->res) == IORESOURCE_MEM || resource_type(entry->res) == 0)
++			num_outbound_ranges++;
++	}
++
++	if (port->num_outbound_ranges && port->num_outbound_ranges != num_outbound_ranges) {
++		dev_err(&pdev->dev, "Mismatches in outbound range adjustment\n");
++		return -EINVAL;
++	}
+ 
+ 	resource_list_for_each_entry(entry, &bridge->windows) {
+-		if (resource_type(entry->res) == IORESOURCE_MEM) {
++		if (resource_type(entry->res) == IORESOURCE_MEM || resource_type(entry->res) == 0) {
++			axi_addr = entry->res->start;
++			axi_addr = mc_pcie_adjust_axi(port, index, axi_addr);
+ 			pci_addr = entry->res->start - entry->offset;
+ 			mc_pcie_setup_window(bridge_base_addr, index,
+-					     entry->res->start, pci_addr,
++					     axi_addr, pci_addr,
+ 					     resource_size(entry->res));
+ 			index++;
+ 		}
+@@ -1005,6 +1052,8 @@ static int mc_platform_init(struct pci_config_window *cfg)
+ 		return -ENOMEM;
+ 	port->dev = dev;
+ 
++	mc_pcie_parse_outbound_range_adjustments(port, dev->of_node);
++
+ 	ret = mc_pcie_init_clks(dev);
+ 	if (ret) {
+ 		dev_err(dev, "failed to get clock resources, error %d\n", ret);
+@@ -1099,10 +1148,6 @@ static int mc_platform_init(struct pci_config_window *cfg)
+ 	writel_relaxed(0, bridge_base_addr + IMASK_HOST);
+ 	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_HOST);
+ 
+-	/* Configure Address Translation Table 0 for PCIe config space */
+-	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & 0xffffffff,
+-			     cfg->res.start, resource_size(&cfg->res));
+-
+ 	return mc_pcie_setup_windows(pdev, port);
+ }
+ 
+-- 
+2.37.2
+
