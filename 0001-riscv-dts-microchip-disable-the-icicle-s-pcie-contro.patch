@@ -1,0 +1,32 @@
+From ba0f786e482eb82085c22bafae868666586bd8cd Mon Sep 17 00:00:00 2001
+From: Conor Dooley <conor.dooley@microchip.com>
+Date: Thu, 6 Oct 2022 12:46:28 +0100
+Subject: [PATCH] riscv: dts: microchip: disable the icicle's pcie controller
+
+PCIe on the icicle kit is unfortunately non-functional in the v2022.10
+design as things stand. Disable it in the devicetree so that there will
+be no issues if the driver happens to be enabled.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
+index 31f88cb4d5e5..c90d497c9385 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
++++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
+@@ -140,10 +140,6 @@ &mmuart4 {
+ 	status = "okay";
+ };
+ 
+-&pcie {
+-	status = "okay";
+-};
+-
+ &qspi {
+ 	status = "okay";
+ };
+-- 
+2.37.3
+

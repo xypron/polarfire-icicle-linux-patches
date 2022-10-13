@@ -4,7 +4,7 @@ set -e
 
 git am --abort || true
 git checkout build || git checkout -b build
-git reset --hard v5.19.6
+git reset --hard v5.19.14
 
 # https://lore.kernel.org/all/20220817132521.3159388-1-heinrich.schuchardt@canonical.com/
 # git am ../0001-riscv-dts-microchip-correct-L2-cache-interrupts.patch
@@ -66,3 +66,6 @@ git am ../0001-PCI-microchip-add-fabric-address-translation-propert.patch
 
 # https://lore.kernel.org/linux-riscv/20220902142202.2437658-5-daire.mcnamara@microchip.com/
 git am ../0001-of-PCI-tidy-up-logging-of-ranges-containing-configur.patch
+
+# Disable PCIe
+git am ../0001-riscv-dts-microchip-disable-the-icicle-s-pcie-contro.patch
